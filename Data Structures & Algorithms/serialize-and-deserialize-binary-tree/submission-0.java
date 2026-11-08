@@ -16,33 +16,31 @@
 
 public class Codec {
 
-    int index = 0;
-
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
         return serializeHelper(root);
     }
 
+    private String serializeHelper(TreeNode root) {
+        if(root == null) return "null";
+
+        return root.val + "," + serializeHelper(root.left) + "," + serializeHelper(root.right);
+    }
+
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        index = 0;
-        return deserializeHelper(data.split(","));
+        Queue<String> queue = new LinkedList<>(Arrays.asList(data.split(",")));
+
+        return deserializeHelper(queue);
     }
 
-    private String serializeHelper(TreeNode root) {
-        if(root == null) return "null,";
-        return root.val + "," + serializeHelper(root.left) + serializeHelper(root.right);
-    }
-
-    private TreeNode deserializeHelper(String[] values) {
-        String value = values[index];
-        index += 1;
-
-        if(value.equals("null")) return null;
-
-        TreeNode root = new TreeNode(Integer.parseInt(value));
-        root.left = deserializeHelper(values);
-        root.right = deserializeHelper(values);
+    private TreeNode deserializeHelper(Queue<String> queue) {
+        String str = queue.poll();
+        
+        if(str.equals("null")) return null;
+        TreeNode root = new TreeNode(Integer.parseInt(str));
+        root.left = deserializeHelper(queue);
+        root.right = deserializeHelper(queue);
         return root;
     }
 }
